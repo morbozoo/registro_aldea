@@ -1,0 +1,5 @@
+li.reg_mail id=reg_mail.id
+  = reg_mail.name
+  form.delete action="/reg_mail/#{reg_mail.id}" method="POST"
+    input type="hidden" name="_method" value="DELETE"
+    input type="submit" value="&times;"  title="Delete Task"

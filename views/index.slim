@@ -1,0 +1,9 @@
+form action="/" method="POST"
+  input type="text" name="reg_mail[name]"
+  input.button type="submit" value="New Reg MAil >>"
+ 
+h2 My registros mail
+ 
+ul.reg_mails
+  - @reg_mails.each do |reg_mail|
+    li.reg_mail= reg_mail.name
