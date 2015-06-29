@@ -9,7 +9,22 @@ require 'omniauth-twitter'
 require 'pony'
 require 'rmagick'
 require 'premailer'
+require 'fog'
 
+##-----------------------RACKSPACE------------------------
+@storage = Fog::Storage.new(
+  :provider => 'rackspace',
+  :rackspace_username => 'kristian.tapia',
+  :rackspace_api_key => 'c9f1d86e4c5648fbbef9d78efbfa0c8d',
+  :rackspace_region => 'ord',
+  :rackspace_temp_url_key => 'jnRB6#1sduo8YGUF&%7r7guf6f'
+)
+@storage.directories.all
+directory = @storage.directories.create(:key => 'aldeaDigital')
+directory.public = true
+directory.save
+
+# puts "public URL for #{file} is #{file.public_url}"
 ##-----------------------CONSTANTS------------------------
 msg_tw_0 = "mensaje 0 enamorado"
 msg_tw_1 = "mensaje 1 radiante"
@@ -67,20 +82,25 @@ post '/mail' do
   handler = Handlers.new
   handler.upload_photo(params, "mail")
   @filename = params[:file][:filename]
-  str_name = params[:reg_mail][:surface_id] + "_" + params[:reg_mail][:nubecita] + "_" + Time.now.to_i.to_s
+  str_name = handler.name(params[:reg_mail][:surface_id],params[:reg_mail][:nubecita])
   handler.circle_photo("./photos/#{@filename}", str_name)
   Reg_Mail.create  params[:reg_mail]
-  handler.send_mail(params, str_name)
-  content_type :json
-  { :surface => params[:reg_mail][:surface_id], 
-    :nombre => params[:reg_mail][:name] }.to_json
+  #handler.send_mail(params, str_name)
+  file = directory.files.create key: File.basename('/fotos/' + str_name + '.png'),
+                                body: File.open('/fotos/' + str_name + '.png', 'r')
+  puts "public URL for #{file} is #{file.public_url}"
+  # content_type :json
+  # { :surface => params[:reg_mail][:surface_id], 
+  #   :nombre => params[:reg_mail][:name] }.to_json
+ 
+  
 end
 
 post '/twitter' do
   handler = Handlers.new
   handler.upload_photo(params, "twitter")
   @filename = params[:file][:filename]
-  str_name = params[:reg_twitter][:surface_id] + "_" + params[:reg_twitter][:nubecita] + "_" + Time.now.to_i.to_s
+  str_name = handler.name(params[:reg_twitter][:surface_id],params[:reg_twitter][:nubecita])
   handler.circle_photo("./photos/#{@filename}", str_name)
   Reg_Twitter.create  params[:reg_twitter]
   @twit_surface = params[:reg_twitter][:surface_id]
@@ -150,18 +170,20 @@ class Handlers
     })
   end
 
-  def circle_photo(photo, str_name)
+  def circle_photo(photo, name)
     im = Magick::Image.read(photo).first
-    circle = Magick::Image.new 200, 200
+    circle = Magick::Image.new 640, 480
     gc = Magick::Draw.new
     gc.fill 'black'
-    gc.circle 100, 100, 100, 1
+    gc.circle 320, 200, 320, 20
     gc.draw circle
     mask = circle.blur_image(0,1).negate
     mask.matte = false
     im.matte = true
     im.composite!(mask, Magick::CenterGravity, Magick::CopyOpacityCompositeOp)
-    im.write '/fotos/' + str_name + '.png'
+    im.crop(400, 400, 0, 0)##WTF??
+    im.resize(400, 400)##WTF?
+    im.write '/fotos/' + name + '.png'
   end
 
   def premail(str_name)
@@ -175,4 +197,11 @@ class Handlers
     end
   end
 
+  def name(surface, nubecita)
+    if surface.length < 2
+      surface = "0" + surface
+    end
+    str_name = surface + "_" + nubecita + "_" + Time.now.to_i.to_s
+    return str_name
+  end
 end
