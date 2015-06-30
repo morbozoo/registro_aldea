@@ -23,7 +23,9 @@ require 'fog'
 directory = @storage.directories.create(:key => 'aldeaDigital')
 directory.public = true
 directory.save
-
+account = @storage.account
+account.meta_temp_url_key = 'jnRB6#1sduo8YGUF&%7r7guf6f'
+account.save
 # puts "public URL for #{file} is #{file.public_url}"
 ##-----------------------CONSTANTS------------------------
 msg_tw_0 = "mensaje 0 enamorado"
@@ -79,16 +81,24 @@ get '/' do
 end
 
 post '/mail' do
-  handler = Handlers.new
-  handler.upload_photo(params, "mail")
+  upload_photo(params, "mail")
   @filename = params[:file][:filename]
-  str_name = handler.name(params[:reg_mail][:surface_id],params[:reg_mail][:nubecita])
-  handler.circle_photo("./photos/#{@filename}", str_name)
+  str_name = name(params[:reg_mail][:surface_id],params[:reg_mail][:nubecita])
+  circle_photo("./photos/#{@filename}", str_name)
   Reg_Mail.create  params[:reg_mail]
   #handler.send_mail(params, str_name)
   file = directory.files.create key: File.basename('/fotos/' + str_name + '.png'),
                                 body: File.open('/fotos/' + str_name + '.png', 'r')
-  puts "public URL for #{file} is #{file.public_url}"
+  @storage = Fog::Storage.new(
+    :provider => 'rackspace',
+    :rackspace_username => 'kristian.tapia',
+    :rackspace_api_key => 'c9f1d86e4c5648fbbef9d78efbfa0c8d',
+    :rackspace_region => 'ord',
+    :rackspace_temp_url_key => 'jnRB6#1sduo8YGUF&%7r7guf6f'
+  )
+  dir = @storage.directories.get('aldeaDigital')
+  fil = dir.files.get('' + str_name + '.png')
+  fil.public_url
   # content_type :json
   # { :surface => params[:reg_mail][:surface_id], 
   #   :nombre => params[:reg_mail][:name] }.to_json
@@ -97,11 +107,10 @@ post '/mail' do
 end
 
 post '/twitter' do
-  handler = Handlers.new
-  handler.upload_photo(params, "twitter")
+  upload_photo(params, "twitter")
   @filename = params[:file][:filename]
-  str_name = handler.name(params[:reg_twitter][:surface_id],params[:reg_twitter][:nubecita])
-  handler.circle_photo("./photos/#{@filename}", str_name)
+  str_name = name(params[:reg_twitter][:surface_id],params[:reg_twitter][:nubecita])
+  circle_photo("./photos/#{@filename}", str_name)
   Reg_Twitter.create  params[:reg_twitter]
   @twit_surface = params[:reg_twitter][:surface_id]
   @twit_photo = params[:file][:filename]
@@ -136,72 +145,72 @@ get '/auth/failure' do
 end
 
 ##-----------------------AUXILIAR METHODS------------------------ 
-class Handlers
-  def upload_photo(params, wich)
-    if wich == "twitter"
-      @surface = params[:reg_twitter][:surface]
-    else
-      @surface = params[:reg_mail][:surface]
-    end
 
-    @filename = params[:file][:filename]
-    file = params[:file][:tempfile]
-    File.open("./photos/#{@filename}", 'wb') do |f|
-      f.write(file.read)
-    end
+
+def upload_photo(params, wich)
+  if wich == "twitter"
+    @surface = params[:reg_twitter][:surface]
+  else
+    @surface = params[:reg_mail][:surface]
   end
 
-  def send_mail(params, str_name)
-    Pony.mail({
-      :to => params[:reg_mail][:mail_list],
-      :via => :smtp,
-      :subject => 'hi',
-      :headers => { 'Content-Type' => 'text/html' },
-      :html_body => 'public/nube_1.html',
-      :via_options => {
-        :address              => 'smtp.gmail.com',
-        :port                 => '587',
-        :enable_starttls_auto => true,
-        :user_name            => 'amozoo@ciencias.unam.mx',
-        :password             => 'L4p4l0m@',
-        :authentication       => :plain, # :plain, :login, :cram_md5, no auth by default
-        :domain               => "localhost.localdomain" # the HELO domain provided by the client to the server
-      }
-    })
-  end
-
-  def circle_photo(photo, name)
-    im = Magick::Image.read(photo).first
-    circle = Magick::Image.new 640, 480
-    gc = Magick::Draw.new
-    gc.fill 'black'
-    gc.circle 320, 200, 320, 20
-    gc.draw circle
-    mask = circle.blur_image(0,1).negate
-    mask.matte = false
-    im.matte = true
-    im.composite!(mask, Magick::CenterGravity, Magick::CopyOpacityCompositeOp)
-    im.crop(400, 400, 0, 0)##WTF??
-    im.resize(400, 400)##WTF?
-    im.write '/fotos/' + name + '.png'
-  end
-
-  def premail(str_name)
-    premailer = Premailer.new('public/temp' + str_name + '.html', :warn_level => Premailer::Warnings::SAFE)
-    File.open("public/" + str_name + ".html", "w") do |fout|
-      fout.puts premailer.to_inline_css
-    end
-
-    premailer.warnings.each do |w|
-      puts "#{w[:message]} (#{w[:level]}) may not render properly in #{w[:clients]}"
-    end
-  end
-
-  def name(surface, nubecita)
-    if surface.length < 2
-      surface = "0" + surface
-    end
-    str_name = surface + "_" + nubecita + "_" + Time.now.to_i.to_s
-    return str_name
+  @filename = params[:file][:filename]
+  file = params[:file][:tempfile]
+  File.open("./photos/#{@filename}", 'wb') do |f|
+    f.write(file.read)
   end
 end
+
+def send_mail(params, str_name)
+  Pony.mail({
+    :to => params[:reg_mail][:mail_list],
+    :via => :smtp,
+    :subject => 'hi',
+    :headers => { 'Content-Type' => 'text/html' },
+    :html_body => 'public/nube_1.html',
+    :via_options => {
+      :address              => 'smtp.gmail.com',
+      :port                 => '587',
+      :enable_starttls_auto => true,
+      :user_name            => 'amozoo@ciencias.unam.mx',
+      :password             => 'L4p4l0m@',
+      :authentication       => :plain, # :plain, :login, :cram_md5, no auth by default
+      :domain               => "localhost.localdomain" # the HELO domain provided by the client to the server
+    }
+  })
+end
+
+def circle_photo(photo, name)
+  im = Magick::Image.read(photo).first
+  circle = Magick::Image.new 640, 480
+  gc = Magick::Draw.new
+  gc.fill 'black'
+  gc.circle 310, 240, 310, 45
+  gc.draw circle
+  mask = circle.blur_image(0,1).negate
+  mask.matte = false
+  im.matte = true
+  im.composite!(mask, Magick::CenterGravity, Magick::CopyOpacityCompositeOp)
+  chopped = im.crop(110, 40, 400,400)
+  chopped.write '/fotos/' + name + '.png'
+end
+
+def premail(str_name)
+  premailer = Premailer.new('public/temp' + str_name + '.html', :warn_level => Premailer::Warnings::SAFE)
+  File.open("public/" + str_name + ".html", "w") do |fout|
+    fout.puts premailer.to_inline_css
+  end
+
+  premailer.warnings.each do |w|
+    puts "#{w[:message]} (#{w[:level]}) may not render properly in #{w[:clients]}"
+  end
+end
+
+def name(surface, nubecita)
+  if surface.length < 2
+    surface = "0" + surface
+  end
+  str_name = surface + "_" + nubecita + "_" + Time.now.to_i.to_s
+  return str_name
+end
+
