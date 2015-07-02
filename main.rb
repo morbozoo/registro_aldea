@@ -81,12 +81,11 @@ get '/' do
 end
 
 post '/mail' do
-  upload_photo(params, "mail")
   @filename = params[:file][:filename]
   str_name = name(params[:reg_mail][:surface_id],params[:reg_mail][:nubecita])
+  upload_photo(params)
   circle_photo("./photos/#{@filename}", str_name)
   Reg_Mail.create  params[:reg_mail]
-  #handler.send_mail(params, str_name)
   file = directory.files.create key: File.basename('/fotos/' + str_name + '.png'),
                                 body: File.open('/fotos/' + str_name + '.png', 'r')
   @storage = Fog::Storage.new(
@@ -99,15 +98,11 @@ post '/mail' do
   dir = @storage.directories.get('aldeaDigital')
   fil = dir.files.get('' + str_name + '.png')
   fil.public_url
-  # content_type :json
-  # { :surface => params[:reg_mail][:surface_id], 
-  #   :nombre => params[:reg_mail][:name] }.to_json
- 
-  
+  #handler.send_mail(params, str_name)
 end
 
 post '/twitter' do
-  upload_photo(params, "twitter")
+  upload_photo(params)
   @filename = params[:file][:filename]
   str_name = name(params[:reg_twitter][:surface_id],params[:reg_twitter][:nubecita])
   circle_photo("./photos/#{@filename}", str_name)
@@ -115,10 +110,14 @@ post '/twitter' do
   @twit_surface = params[:reg_twitter][:surface_id]
   @twit_photo = params[:file][:filename]
   #client.update_with_media(msg, File.new("/fotos" + str_name + ".png"))
-  content_type :json
-  { :surface => params[:reg_twitter][:surface_id], 
-    :tweet => params[:reg_twitter][:tweet] }.to_json
-end    
+end
+
+post '/nube_aldea' do
+  upload_photo(params)
+  @filename = params[:file][:filename]
+  str_name = name(params[:surface_id],params[:nubecita])
+  circle_photo("./photos/#{@filename}", str_name)
+end  
 
 ##-----------------------SESSIONS------------------------
 configure do
@@ -146,14 +145,7 @@ end
 
 ##-----------------------AUXILIAR METHODS------------------------ 
 
-
-def upload_photo(params, wich)
-  if wich == "twitter"
-    @surface = params[:reg_twitter][:surface]
-  else
-    @surface = params[:reg_mail][:surface]
-  end
-
+def upload_photo(params)
   @filename = params[:file][:filename]
   file = params[:file][:tempfile]
   File.open("./photos/#{@filename}", 'wb') do |f|
