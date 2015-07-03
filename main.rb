@@ -81,31 +81,33 @@ get '/' do
 end
 
 post '/mail' do
-  @filename = params[:file][:filename]
   str_name = name(params[:reg_mail][:surface_id],params[:reg_mail][:nubecita])
-  upload_photo(params)
-  circle_photo("./photos/#{@filename}", str_name)
+  upload_photo(params, str_name)
+  circle_photo(str_name)
   Reg_Mail.create  params[:reg_mail]
-  file = directory.files.create key: File.basename('/fotos/' + str_name + '.png'),
+  fork do
+    file = directory.files.create key: File.basename('/fotos/' + str_name + '.png'),
                                 body: File.open('/fotos/' + str_name + '.png', 'r')
-  @storage = Fog::Storage.new(
-    :provider => 'rackspace',
-    :rackspace_username => 'kristian.tapia',
-    :rackspace_api_key => 'c9f1d86e4c5648fbbef9d78efbfa0c8d',
-    :rackspace_region => 'ord',
-    :rackspace_temp_url_key => 'jnRB6#1sduo8YGUF&%7r7guf6f'
-  )
-  dir = @storage.directories.get('aldeaDigital')
-  fil = dir.files.get('' + str_name + '.png')
-  fil.public_url
-  #handler.send_mail(params, str_name)
+    @storage = Fog::Storage.new(
+      :provider => 'rackspace',
+      :rackspace_username => 'kristian.tapia',
+      :rackspace_api_key => 'c9f1d86e4c5648fbbef9d78efbfa0c8d',
+      :rackspace_region => 'ord',
+      :rackspace_temp_url_key => 'jnRB6#1sduo8YGUF&%7r7guf6f'
+    )
+    dir = @storage.directories.get('aldeaDigital')
+    fil = dir.files.get('' + str_name + '.png')
+    fil.public_url
+    #handler.send_mail(params, str_name)
+  end
+  content_type :json
+  { :surface_id => params[:reg_mail][:surface_id], :name => params[:reg_mail][:name] }.to_json
 end
 
 post '/twitter' do
-  upload_photo(params)
-  @filename = params[:file][:filename]
   str_name = name(params[:reg_twitter][:surface_id],params[:reg_twitter][:nubecita])
-  circle_photo("./photos/#{@filename}", str_name)
+  upload_photo(params, str_name)
+  circle_photo(str_name)
   Reg_Twitter.create  params[:reg_twitter]
   @twit_surface = params[:reg_twitter][:surface_id]
   @twit_photo = params[:file][:filename]
@@ -145,10 +147,9 @@ end
 
 ##-----------------------AUXILIAR METHODS------------------------ 
 
-def upload_photo(params)
-  @filename = params[:file][:filename]
+def upload_photo(params, str_name)
   file = params[:file][:tempfile]
-  File.open("./photos/#{@filename}", 'wb') do |f|
+  File.open("./photos/" + str_name + ".png", 'wb') do |f|
     f.write(file.read)
   end
 end
@@ -172,8 +173,8 @@ def send_mail(params, str_name)
   })
 end
 
-def circle_photo(photo, name)
-  im = Magick::Image.read(photo).first
+def circle_photo(name)
+  im = Magick::Image.read('photos/' + name + '.png').first
   circle = Magick::Image.new 640, 480
   gc = Magick::Draw.new
   gc.fill 'black'
