@@ -40,13 +40,110 @@ use OmniAuth::Builder do
   provider :twitter, 'EFrlZBlXavNhAuMFFnWTfZiyJ', '0dA1Dc4o0tZMag1CJwFJ1bnmFE2m3PmjHqjgSKe8yY5CBeNlSt'
 end
 
-client = Twitter::REST::Client.new do |config|
-  config.consumer_key        = "EFrlZBlXavNhAuMFFnWTfZiyJ"
-  config.consumer_secret     = "0dA1Dc4o0tZMag1CJwFJ1bnmFE2m3PmjHqjgSKe8yY5CBeNlSt"
-  config.access_token        = "987369914-6FavTBBn5dFUy2F3mvc1yqYD6N3hGGb15DzDkzrC"
-  config.access_token_secret = "lApFxTI06UwxMbeuRAWd0TWZUjAy9PJ6em50b55zyUNj4"
+client01 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "w4rHXOjzqTrBXQW6ZKnl77VCH"
+  config.consumer_secret     = "bWfjcjvS2QZU6neDLkFe4iPdgCsFDV0ioY4vJyyHdqGWd4L0BC"
+  config.access_token        = "3267267924-FDAk1R6ln7gD1la3uNmjDuutIm8yEzHKBSDCDU4"
+  config.access_token_secret = "IeN3C1OKJUysjAXpmdvMkJzthg1vCnNr24fgncCiPa8N2"
 end
 
+client02 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "xpNaGPBqcof0yyrHtg7Ui97uA"
+  config.consumer_secret     = "gWQinSnfGoKsyHdiaGAJxaRi1uyzCYvCJT3B7LOwRbxhDBc8h1"
+  config.access_token        = "3267427993-WA8W9S5L1diX31UOzMMCyERec6w36YuPYL1qhNI"
+  config.access_token_secret = "TURBhtDgKcOx6ad3D3FPMHsdBWAk4q3AWzlURSSt9r0N5"
+end
+
+client03 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "NQh0pGycwicBMRJiRx8V77Onh"
+  config.consumer_secret     = "TVyeScpmHJ1YPMDpbKtqMt1vZq6tHJNN3ZZ6qAyXvnNX8rvGoy"
+  config.access_token        = "3267346506-4fQzUddW8n9THWpDwEvp5P1cvD18ZtO1TUeVBkl"
+  config.access_token_secret = "1PtVIntB3LJ7DNgd5NEqZSkDLOQsaUhD8Mkig6CXoyJOk"
+end
+
+client04 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "ZQmFJNTUook9WYDvdTDt6KT44"
+  config.consumer_secret     = "MadNLggbhL7qNyRkwA3RB92uW55L4IYs27khc92KwnIVvahmzP"
+  config.access_token        = "3267449953-KFo1wEpaeNJR0eMyxkQvPbi8DDEe6YHSfEjd13M"
+  config.access_token_secret = "RZFZ3r4kZ9lgiTnpO8oH5aoSTCKZOStF2empNLzsbXgzk"
+end
+
+client05 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "7eL9MURKIlAtBGyvU5Tocx6xF"
+  config.consumer_secret     = "fybQNF2WifUI8abJJp40HqlnlKK13OZNBU2VselWzepxxCSxh3"
+  config.access_token        = "3267425732-MtCWcDneW8N48qwjbyhZRrNU5RbyyrKyx3V2O6x"
+  config.access_token_secret = "PS00cqBgOBIwKD11RwbKLZ5bKsbI7E7rfmfrdYpwNGtiX"
+end
+
+client06 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = ""
+  config.consumer_secret     = ""
+  config.access_token        = ""
+  config.access_token_secret = ""
+end
+
+client07 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "6yBlgdB0G0DZg5aLqSsF3Ovm5"
+  config.consumer_secret     = "sD5zk3sK7yUPqDUiTeOHETM3iUYn8QyurtAd5Cftxt1VYcimEb"
+  config.access_token        = "3267436958-WBniCJsmN19w2LtdgwjGyKHBgBT9LMzQG1EJdIF"
+  config.access_token_secret = "yQOvoPVSQ3xM3eLBvu1l0p7U76gJrVxMjA75SJPImj6iC"
+end
+
+client08 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "agGyb2obgQDr1mOxPMsI5vw1p"
+  config.consumer_secret     = "KzM4tJMviz1T2L0OweBptnPZKv6SFeknQBaJRKFsCEJK3rMpBt"
+  config.access_token        = "3267489331-l6enWGsH6KT7t7BUUoZAbMQlelC4BOhxMjDbKC0"
+  config.access_token_secret = "xv11P1e6AQAb6H3lJpk9Dbf9pRzt5s6BfTe212yg2j7Cz"
+end
+
+client09 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "yGlzqYgc7KtfV0Nudy4PEvJxZ"
+  config.consumer_secret     = "05xvfDCXCkKgXpP15G7VidgdvL31rN8UAbu80a3oeNtL3QCM9s"
+  config.access_token        = "3267446126-BA9BodEGI1YLwYKXXpKRolSy9LJ4whjFUPYlpC7"
+  config.access_token_secret = "FBmOnWCnagV4N58Zg4fNCnEfkBBcPATQVhGzARNEe86jY"
+end
+
+client10 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "3MhBEx0fcETUeB1ZSti0DmJ4C"
+  config.consumer_secret     = "YBKY26K4v0Z6mlI9ft2gQd7s2AhW6WS4Lz3P1Uqc9A2XlQDenC"
+  config.access_token        = "3267456026-zgQCCH5vygPeSuLStYzokH35zTZe7yvRaRVy206"
+  config.access_token_secret = "j2ta3BsqPBwZzU68NMbK3ElVeLJSB9IWlBjiluk6Mt2Qp"
+end
+
+client11 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "BVcdRSaO3nPflHxOhxpUoylaC"
+  config.consumer_secret     = "8fPMm8ZPaMNS4DeDs9rtoTVcqRy7szfCYaNJtE1gHZI99u9snP"
+  config.access_token        = "3267459506-K7chBvRe1LlS46MfMJcdqbHO1wO4e38HITsLp7R"
+  config.access_token_secret = "BLQWMoJXaJiWS5GyqH6CXMYxB2D7tr49ayxeOTIi7ILii"
+end
+
+client12 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "Tn51d8EpZFM3DXlUeDBtpwpMb"
+  config.consumer_secret     = "XpYSFtZs29KMbRTJCs3Lde43z2gRAv3wSQQmjBxXmVE0Vsu4fO"
+  config.access_token        = "3267461168-Lyl93NRCcwy4Fu0qIMrIJARsl4tG3dptTjbKbl0"
+  config.access_token_secret = "VAxX4qRjyNcy9BDN37lWbsKNRQ1OVvKLhO6TYbKANQzDd"
+end
+
+client13 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "oBVXYWsKnWByyev6kk0MW8zJY"
+  config.consumer_secret     = "6wseTivVEiBNkYPL2KOcVQiVNAY1c8YvY0arQNdxxdZlxbD4hX"
+  config.access_token        = "3267415044-GEalxvIab4TsZ9Wc7D38DHRwEt1g29rQeJuE4AH"
+  config.access_token_secret = "SNIVbtBS7wrIbxCncAgZIj415JXMcN4z9QP2TL1C0hM1s"
+end
+
+client14 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = ""
+  config.consumer_secret     = ""
+  config.access_token        = ""
+  config.access_token_secret = ""
+end
+
+client15 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = ""
+  config.consumer_secret     = ""
+  config.access_token        = ""
+  config.access_token_secret = ""
+end
 ##-----------------------DATABASE------------------------
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
 
@@ -69,6 +166,7 @@ class Reg_Twitter
   property :nubecita,   Integer
   property :user_name,  String
   property :tweet,      String
+  property :twitter_id, String
   property :sent,       Boolean, default: false
 end
 Reg_Twitter.auto_upgrade!
@@ -115,10 +213,10 @@ post '/twitter' do
 end
 
 post '/nube_aldea' do
-  upload_photo(params)
   @filename = params[:file][:filename]
   str_name = name(params[:surface_id],params[:nubecita])
-  circle_photo("./photos/#{@filename}", str_name)
+  upload_photo(params, str_name)
+  circle_photo(str_name)
 end  
 
 ##-----------------------SESSIONS------------------------
