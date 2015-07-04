@@ -76,10 +76,10 @@ client05 = Twitter::REST::Client.new do |config|
 end
 
 client06 = Twitter::REST::Client.new do |config|
-  config.consumer_key        = ""
-  config.consumer_secret     = ""
-  config.access_token        = ""
-  config.access_token_secret = ""
+  config.consumer_key        = "XC0lADgwPinqm4PHxS2WZgNqb"
+  config.consumer_secret     = "S1K20KvSajD1KHIsIg53F50zO9GFzgHFEotfUicd3QvkZsDjcV"
+  config.access_token        = "3267421608-dPb5FVvAEGyXKscxnelir9qbHrCRk6HtcdqwDcS"
+  config.access_token_secret = "2LQloWlJJNsuAjlAc7OO4MZzKBEm9py3rn9KzlsAnuath"
 end
 
 client07 = Twitter::REST::Client.new do |config|
@@ -132,10 +132,10 @@ client13 = Twitter::REST::Client.new do |config|
 end
 
 client14 = Twitter::REST::Client.new do |config|
-  config.consumer_key        = ""
-  config.consumer_secret     = ""
-  config.access_token        = ""
-  config.access_token_secret = ""
+  config.consumer_key        = "st5GnW1S4WgVjjiKQhmzFN9pH"
+  config.consumer_secret     = "l9mCUEb1a5zQepy0CCiMeR17kBlhE3NCyyixqYCwbw8PJ6OXJS"
+  config.access_token        = "3267514243-pbMIPV4MBYVeHRsNPovo1BsThyAmfO4R7zF3UK0"
+  config.access_token_secret = "csoyqYWCIknPjnIbpcGNpCYQGDP7Q7ZUKfvgKFEtjGYOF"
 end
 
 client15 = Twitter::REST::Client.new do |config|
