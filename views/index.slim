@@ -1,0 +1,16 @@
+form action="/" method="POST"
+  input type="number" name="registro[surface]" 
+  br
+  input type="number" name="registro[senders]" 
+  br
+  input type="text" name="registro[message]" 
+  br
+  input type="text" name="registro[mails]" 
+  br
+  input.button type="submit" value="Nuevo Registro >>"
+
+h2 Mis Registros
+ 
+ul.registros
+  - @registros.each do |registro|
+    == slim :registro, locals: { registro: registro }

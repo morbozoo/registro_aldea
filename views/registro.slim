@@ -1,0 +1,5 @@
+li.registro
+  = registro.id
+    form.delete action="/registro/#{registro.id}" method="POST"
+    input type="hidden" name="_method" value="DELETE"
+    input type="submit" value="Borrar Registro" title="Borrar Registro"
