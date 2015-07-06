@@ -73,8 +73,6 @@ GEM
       fog-core (~> 1.0)
       multi_json (~> 1.10)
     formatador (0.2.5)
-    haml (4.0.6)
-      tilt
     hashie (3.4.2)
     htmlentities (4.3.3)
     http (0.6.4)
@@ -117,6 +115,9 @@ GEM
     rack-protection (1.5.3)
       rack
     rmagick (2.15.2)
+    roadie (3.0.5)
+      css_parser (~> 1.3.4)
+      nokogiri (~> 1.6.0)
     shotgun (0.9.1)
       rack (>= 1.0)
     simple_oauth (0.3.1)
@@ -124,12 +125,8 @@ GEM
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
-    slim (3.0.6)
-      temple (~> 0.7.3)
-      tilt (>= 1.3.3, < 2.1)
     sqlite3 (1.3.10)
     stringex (1.5.1)
-    temple (0.7.6)
     thread_safe (0.3.5)
     tilt (2.0.1)
     twitter (5.14.0)
@@ -151,15 +148,15 @@ PLATFORMS
 DEPENDENCIES
   data_mapper
   fog (~> 1.22.0)
-  haml
   json
+  mail
   omniauth-twitter
   pony
   premailer
   rmagick
+  roadie
   shotgun
   sinatra
-  slim
   sqlite3
   twitter
 

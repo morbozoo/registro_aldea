@@ -1,6 +1,7 @@
 require 'data_mapper'
-require 'pony'
 require 'fog'
+require 'premailer'
+require 'mail'
 
 ##-----------------------DATABASE------------------------
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
@@ -50,7 +51,7 @@ str_2 = "\"
           <td width=\"28\"></td>
           <td width=\"550\"><font face=\"helvetica\" size=\"5\" color=\"white\">"
 
-str_3 = "quiere compartirte como se siente hoy en Aldea Digital
+str_3 = " quiere compartirte como se siente hoy en Aldea Digital
           </font></td>
         </tr>
         <tr height=\"102\">
@@ -90,6 +91,23 @@ str_4 = "\"
 </table>"
 
   ##-----------------------AUXILIAR METHODS------------------------
+def premail(str_name)
+  premailer = Premailer.new('public/html/' + str_name + '.html', :warn_level => Premailer::Warnings::SAFE)
+  
+  File.open("public/html/ready/" + str_name + ".html", "w") do |fout|
+    fout.puts premailer.to_inline_css
+    puts "output listo"
+  end
+
+  File.open("public/html/" + str_name + ".txt", "w") do |fout|
+    fout.puts premailer.to_plain_text
+  end
+
+  premailer.warnings.each do |w|
+  puts "#{w[:message]} (#{w[:level]}) may not render properly in #{w[:clients]}"
+end
+end
+
 def get_nube(nubecita)
   case nubecita
     when 0
@@ -104,6 +122,7 @@ def get_nube(nubecita)
       str_nube = "https://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.ssl.cf2.rackcdn.com/email/radiante.png"
     when 5
       str_nube = "https://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.ssl.cf2.rackcdn.com/email/sorprendido.png"
+    else 
   end
   return str_nube
 end
@@ -145,27 +164,30 @@ def name(surface, nubecita)
   return str_name
 end
 
-def send_mail(mail_list, final_string)
-  Pony.mail({
-    :to => "amozoo@ciencias.unam.mx",
-    :via => :smtp,
-    :subject => 'hi',
-    :headers => { 'Content-Type' => 'text/html' },
-    :html_body => final_string,
-    :via_options => {
-      :address              => 'smtp.gmail.com',
-      :port                 => '587',
-      :enable_starttls_auto => true,
-      :user_name            => 'amozoo@ciencias.unam.mx',
-      :password             => 'L4p4l0m@',
-      :authentication       => :plain, # :plain, :login, :cram_md5, no auth by default
-      :domain               => "localhost.localdomain" # the HELO domain provided by the client to the server
-    }
-  })
+def send_mail(mail_list, str_name)
+  Mail.defaults do
+    delivery_method :smtp, { :address              => "smtp.infinitummail.com",
+                             :port                 => 465,
+                             :domain               => 'infinitummail.com',
+                             :user_name            => 'lanubedealdeadigital@infinitummail.com',
+                             :password             => 'Ald3aDigital.',
+                             :authentication       => 'plain',
+                             :enable_starttls_auto => true  }
+  end
+  Mail.deliver do
+    from     'alguien'
+    to       'accounts_aldea2015@cocolab.mx'
+    subject  'Here is the image you wanted'
+    html_part do
+      content_type 'text/html; charset=UTF-8'
+      body File.read('public/html/ready/' + str_name + '.html')
+    end   
+  end
 end
 
 
 ##-----------------------MAILER------------------------
+
 @to_mail = Reg_Mail.all(:sent => false)
 for item in @to_mail
   nube      = item[:nubecita]
@@ -175,6 +197,9 @@ for item in @to_mail
   str_nube  = get_nube(nube)
   str_url   = store_photo(str_name)
   final_string = str_1 + str_nube + str_2 + name + str_3 + str_url + str_4
-  send_mail(mail_list, final_string)
+  File.write('public/html/' + str_name + '.html', final_string)
+  premail(str_name)
+  send_mail(mail_list, str_name)
   puts "uno enviado"
 end
+

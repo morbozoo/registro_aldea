@@ -1,5 +1,6 @@
 require 'data_mapper'
 require 'twitter'
+require 'RMagick'
 
 ##-----------------------CONSTANTS------------------------
 msg_tw_0 = "mensaje 0 enamorado"
@@ -42,14 +43,6 @@ DataMapper.finalize
 
 ##-----------------------TWITTER------------------------
 twitter_clients = []
-
-client00 = Twitter::REST::Client.new do |config|
-  config.consumer_key        = ""
-  config.consumer_secret     = ""
-  config.access_token        = ""
-  config.access_token_secret = ""
-end
-# twitter_clients.push(client00)
 
 client01 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "w4rHXOjzqTrBXQW6ZKnl77VCH"
@@ -163,6 +156,14 @@ client14 = Twitter::REST::Client.new do |config|
 end
 twitter_clients.push(client14)
 
+client15 = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "5zgLiMg43wXdfBHIOIzkyozHZ"
+  config.consumer_secret     = "NOa6GzXWkBUroVvZP6TsD2TYp7r3RttAKIBckCdipbJm5WyUJe"
+  config.access_token        = "3270294169-uDC0W1DEVv7XKm93kovt7vdHXGHu0S6Ez1ruT5w"
+  config.access_token_secret = "brjrc9VdqagddyWbB2tC5RnclKvxmm2VEZn4m2kW1UhzY"
+end
+twitter_clients.push(client15)
+
 ##-----------------------------------------------
 
 def tweetear
@@ -182,8 +183,17 @@ def tweetear
   end  
 end
 
-while true
-  sleep(5)
-  puts "iniciando"
-  tweetear()
+def crear_nube
+  dst = Magick::Image.read("public/images/enamorado.png").first
+  src = Magick::Image.read('/fotos/05_5_1436222340.png'){self.size = "145x145"}.first
+  result = dst.composite(src, Magick::CenterGravity, Magick::OverCompositeOp)
+  result.write('composite2.gif')
 end
+
+crear_nube
+
+# while true
+#   sleep(5)
+#   puts "iniciando"
+#   tweetear()
+# end
