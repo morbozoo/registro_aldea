@@ -1,6 +1,5 @@
 require 'data_mapper'
 require 'fog'
-require 'premailer'
 require 'mail'
 
 ##-----------------------DATABASE------------------------
@@ -21,15 +20,21 @@ Reg_Mail.auto_upgrade!
 
 DataMapper.finalize
 
-##-----------------------RACKSPACE------------------------
-
+##-----------------------MAIL------------------------
+Mail.defaults do
+  delivery_method :smtp, { :address              => "smtp.infinitummail.com",
+                           :port                 => 25,
+                           :domain               => 'infinitummail.com',
+                           :user_name            => 'lanubedealdeadigital@infinitummail.com',
+                           :password             => 'Ald3aDigital.',
+                           :authentication       => 'login',
+                           :enable_starttls_auto => true  }
+end
 
 ##-----------------------HTML STRINGS------------------------
 
-str_1 = "<table  width=\"595\"
-        height=\"777\" 
-        style=\"background-color: white;\"
-        text-align=\"center\">
+str_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+<html><body><table width=\"595\" height=\"777\" style=\"background: white\" text-align=\"center\" bgcolor=\"white\">
   <tr height=\"150\">
     <td align=\"center\">
         <img src=\"https://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.ssl.cf2.rackcdn.com/email/logo_aldea.png\">
@@ -37,14 +42,13 @@ str_1 = "<table  width=\"595\"
   </tr>
   <tr>
     <td>
-      <table  background=\""
+      <table background=\""
 
-str_2 = "\"
-              width=\"595\">
+str_2 = "\" width=\"595\">
         <tr height=\"130\">
           <td width=\"28\"></td>
           <td>
-            <font face=\"helvetica\" size=\"5\" color=\"white\">¡Hola!</font>
+            <font face=\"helvetica\" size=\"5\" color=\"white\">&iexcl;Hola!</font>
           </td>
         </tr>
         <tr height=\"60\">
@@ -54,31 +58,28 @@ str_2 = "\"
 str_3 = " quiere compartirte como se siente hoy en Aldea Digital
           </font></td>
         </tr>
-        <tr height=\"102\">
+        <tr height=\"127\">
           <td></td>
         </tr>
-        <tr  height=\"145\">
+        <tr height=\"146\">
           <td width=\"28\"></td>
           <td>
             <table>
               <tr>
-                <td width=\"208\"></td>
+                <td width=\"226\"></td>
                 <td>
-                  <img  src=\""
+                  <img src=\""
 
-str_4 = "\"
-                        height=\"145\"
-                        width=\"145\"
-                        alt=\"Tu foto en Aldea Digital 2015\"> 
+str_4 = "\" height=\"155\" width=\"160\" alt=\"Tu foto en Aldea Digital 2015\"> 
                 </td>
               </tr>
             </table>
           </td>
         </tr>
-        <tr  height=\"100\">
+        <tr height=\"70\">
           <td></td>
         </tr>
-        <tr  height=\"60\">
+        <tr height=\"60\">
           <td width=\"28\"></td>
           <td width=\"150\"></td>
           <td width=\"50\"><img src=\"http://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.r79.cf2.rackcdn.com/email/instagram.png\"></td>
@@ -88,25 +89,10 @@ str_4 = "\"
       </table>
     </td>
   </tr>
-</table>"
+</table></body></html>
+"
 
   ##-----------------------AUXILIAR METHODS------------------------
-def premail(str_name)
-  premailer = Premailer.new('public/html/' + str_name + '.html', :warn_level => Premailer::Warnings::SAFE)
-  
-  File.open("public/html/ready/" + str_name + ".html", "w") do |fout|
-    fout.puts premailer.to_inline_css
-    puts "output listo"
-  end
-
-  File.open("public/html/" + str_name + ".txt", "w") do |fout|
-    fout.puts premailer.to_plain_text
-  end
-
-  premailer.warnings.each do |w|
-  puts "#{w[:message]} (#{w[:level]}) may not render properly in #{w[:clients]}"
-end
-end
 
 def get_nube(nubecita)
   case nubecita
@@ -123,6 +109,7 @@ def get_nube(nubecita)
     when 5
       str_nube = "https://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.ssl.cf2.rackcdn.com/email/sorprendido.png"
     else 
+      str_nube = "https://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.ssl.cf2.rackcdn.com/email/feliz.png"
   end
   return str_nube
 end
@@ -165,22 +152,13 @@ def name(surface, nubecita)
 end
 
 def send_mail(mail_list, str_name)
-  Mail.defaults do
-    delivery_method :smtp, { :address              => "smtp.infinitummail.com",
-                             :port                 => 465,
-                             :domain               => 'infinitummail.com',
-                             :user_name            => 'lanubedealdeadigital@infinitummail.com',
-                             :password             => 'Ald3aDigital.',
-                             :authentication       => 'plain',
-                             :enable_starttls_auto => true  }
-  end
   Mail.deliver do
     from     'alguien'
     to       'accounts_aldea2015@cocolab.mx'
     subject  'Here is the image you wanted'
     html_part do
       content_type 'text/html; charset=UTF-8'
-      body File.read('public/html/ready/' + str_name + '.html')
+      body File.read('public/html/' + str_name + '.html')
     end   
   end
 end
@@ -198,8 +176,8 @@ for item in @to_mail
   str_url   = store_photo(str_name)
   final_string = str_1 + str_nube + str_2 + name + str_3 + str_url + str_4
   File.write('public/html/' + str_name + '.html', final_string)
-  premail(str_name)
   send_mail(mail_list, str_name)
-  puts "uno enviado"
+  item.update(:sent => true)
+  puts "enviado"
 end
 

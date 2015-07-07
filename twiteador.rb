@@ -3,13 +3,13 @@ require 'twitter'
 require 'RMagick'
 
 ##-----------------------CONSTANTS------------------------
-msg_tw_0 = "mensaje 0 enamorado"
-msg_tw_1 = "mensaje 1 radiante"
-msg_tw_2 = "mensaje 2 felíz"
-msg_tw_3 = "mensaje 3 sorprendido"
-msg_tw_4 = "mensaje 4 indiferente"
-msg_tw_5 = "mensaje 5 inteligente"
-mensajes = [msg_tw_0, msg_tw_1, msg_tw_2, msg_tw_3, msg_tw_4, msg_tw_5]
+msg_tw_0 = " se siente Enamorado "
+msg_tw_1 = " se siente Radiante"
+msg_tw_2 = " se siente Felíz"
+msg_tw_3 = " se siente Sorprendido"
+msg_tw_4 = " se siente Indiferente"
+msg_tw_5 = " se siente Inteligente"
+@mensajes = [msg_tw_0, msg_tw_1, msg_tw_2, msg_tw_3, msg_tw_4, msg_tw_5]
 
 ##-----------------------DATABASE------------------------
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
@@ -42,7 +42,7 @@ Reg_Twitter.auto_upgrade!
 DataMapper.finalize
 
 ##-----------------------TWITTER------------------------
-twitter_clients = []
+@twitter_clients = []
 
 client01 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "w4rHXOjzqTrBXQW6ZKnl77VCH"
@@ -50,7 +50,7 @@ client01 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267267924-FDAk1R6ln7gD1la3uNmjDuutIm8yEzHKBSDCDU4"
   config.access_token_secret = "IeN3C1OKJUysjAXpmdvMkJzthg1vCnNr24fgncCiPa8N2"
 end
-twitter_clients.push(client01)
+@twitter_clients.push(client01)
 
 client02 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "xpNaGPBqcof0yyrHtg7Ui97uA"
@@ -58,7 +58,7 @@ client02 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267427993-WA8W9S5L1diX31UOzMMCyERec6w36YuPYL1qhNI"
   config.access_token_secret = "TURBhtDgKcOx6ad3D3FPMHsdBWAk4q3AWzlURSSt9r0N5"
 end
-twitter_clients.push(client02)
+@twitter_clients.push(client02)
 
 client03 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "NQh0pGycwicBMRJiRx8V77Onh"
@@ -66,7 +66,7 @@ client03 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267346506-4fQzUddW8n9THWpDwEvp5P1cvD18ZtO1TUeVBkl"
   config.access_token_secret = "1PtVIntB3LJ7DNgd5NEqZSkDLOQsaUhD8Mkig6CXoyJOk"
 end
-twitter_clients.push(client03)
+@twitter_clients.push(client03)
 
 client04 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "ZQmFJNTUook9WYDvdTDt6KT44"
@@ -74,7 +74,7 @@ client04 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267449953-KFo1wEpaeNJR0eMyxkQvPbi8DDEe6YHSfEjd13M"
   config.access_token_secret = "RZFZ3r4kZ9lgiTnpO8oH5aoSTCKZOStF2empNLzsbXgzk"
 end
-twitter_clients.push(client04)
+@twitter_clients.push(client04)
 
 client05 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "7eL9MURKIlAtBGyvU5Tocx6xF"
@@ -82,7 +82,7 @@ client05 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267425732-MtCWcDneW8N48qwjbyhZRrNU5RbyyrKyx3V2O6x"
   config.access_token_secret = "PS00cqBgOBIwKD11RwbKLZ5bKsbI7E7rfmfrdYpwNGtiX"
 end
-twitter_clients.push(client05)
+@twitter_clients.push(client05)
 
 client06 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "XC0lADgwPinqm4PHxS2WZgNqb"
@@ -90,7 +90,7 @@ client06 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267421608-dPb5FVvAEGyXKscxnelir9qbHrCRk6HtcdqwDcS"
   config.access_token_secret = "2LQloWlJJNsuAjlAc7OO4MZzKBEm9py3rn9KzlsAnuath"
 end
-twitter_clients.push(client06)
+@twitter_clients.push(client06)
 
 client07 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "6yBlgdB0G0DZg5aLqSsF3Ovm5"
@@ -98,7 +98,7 @@ client07 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267436958-WBniCJsmN19w2LtdgwjGyKHBgBT9LMzQG1EJdIF"
   config.access_token_secret = "yQOvoPVSQ3xM3eLBvu1l0p7U76gJrVxMjA75SJPImj6iC"
 end
-twitter_clients.push(client07)
+@twitter_clients.push(client07)
 
 client08 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "agGyb2obgQDr1mOxPMsI5vw1p"
@@ -106,7 +106,7 @@ client08 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267489331-l6enWGsH6KT7t7BUUoZAbMQlelC4BOhxMjDbKC0"
   config.access_token_secret = "xv11P1e6AQAb6H3lJpk9Dbf9pRzt5s6BfTe212yg2j7Cz"
 end
-twitter_clients.push(client08)
+@twitter_clients.push(client08)
 
 client09 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "yGlzqYgc7KtfV0Nudy4PEvJxZ"
@@ -114,7 +114,7 @@ client09 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267446126-BA9BodEGI1YLwYKXXpKRolSy9LJ4whjFUPYlpC7"
   config.access_token_secret = "FBmOnWCnagV4N58Zg4fNCnEfkBBcPATQVhGzARNEe86jY"
 end
-twitter_clients.push(client09)
+@twitter_clients.push(client09)
 
 client10 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "3MhBEx0fcETUeB1ZSti0DmJ4C"
@@ -122,7 +122,7 @@ client10 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267456026-zgQCCH5vygPeSuLStYzokH35zTZe7yvRaRVy206"
   config.access_token_secret = "j2ta3BsqPBwZzU68NMbK3ElVeLJSB9IWlBjiluk6Mt2Qp"
 end
-twitter_clients.push(client10)
+@twitter_clients.push(client10)
 
 client11 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "BVcdRSaO3nPflHxOhxpUoylaC"
@@ -130,7 +130,7 @@ client11 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267459506-K7chBvRe1LlS46MfMJcdqbHO1wO4e38HITsLp7R"
   config.access_token_secret = "BLQWMoJXaJiWS5GyqH6CXMYxB2D7tr49ayxeOTIi7ILii"
 end
-twitter_clients.push(client11)
+@twitter_clients.push(client11)
 
 client12 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "Tn51d8EpZFM3DXlUeDBtpwpMb"
@@ -138,7 +138,7 @@ client12 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267461168-Lyl93NRCcwy4Fu0qIMrIJARsl4tG3dptTjbKbl0"
   config.access_token_secret = "VAxX4qRjyNcy9BDN37lWbsKNRQ1OVvKLhO6TYbKANQzDd"
 end
-twitter_clients.push(client12)
+@twitter_clients.push(client12)
 
 client13 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "oBVXYWsKnWByyev6kk0MW8zJY"
@@ -146,7 +146,7 @@ client13 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267415044-GEalxvIab4TsZ9Wc7D38DHRwEt1g29rQeJuE4AH"
   config.access_token_secret = "SNIVbtBS7wrIbxCncAgZIj415JXMcN4z9QP2TL1C0hM1s"
 end
-twitter_clients.push(client13)
+@twitter_clients.push(client13)
 
 client14 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "st5GnW1S4WgVjjiKQhmzFN9pH"
@@ -154,7 +154,7 @@ client14 = Twitter::REST::Client.new do |config|
   config.access_token        = "3267514243-pbMIPV4MBYVeHRsNPovo1BsThyAmfO4R7zF3UK0"
   config.access_token_secret = "csoyqYWCIknPjnIbpcGNpCYQGDP7Q7ZUKfvgKFEtjGYOF"
 end
-twitter_clients.push(client14)
+@twitter_clients.push(client14)
 
 client15 = Twitter::REST::Client.new do |config|
   config.consumer_key        = "5zgLiMg43wXdfBHIOIzkyozHZ"
@@ -162,7 +162,7 @@ client15 = Twitter::REST::Client.new do |config|
   config.access_token        = "3270294169-uDC0W1DEVv7XKm93kovt7vdHXGHu0S6Ez1ruT5w"
   config.access_token_secret = "brjrc9VdqagddyWbB2tC5RnclKvxmm2VEZn4m2kW1UhzY"
 end
-twitter_clients.push(client15)
+@twitter_clients.push(client15)
 
 ##-----------------------------------------------
 
@@ -170,9 +170,10 @@ def tweetear
   @to_tweet = Reg_Twitter.all(:sent => false)
   cont = 1
   for item in @to_tweet
-    mensaje = mensajes[item[:nubecita]]
+    mensaje = @mensajes[item[:nubecita]]
     filename = item[:filename]
-    twitter_clients[cont].update_with_media(mensaje, File.new('/fotos/' + filename + '.png'))
+    crear_nube(item[:nubecita], item[:filename])
+    @twitter_clients[cont].update_with_media(mensaje, File.new('photos/nube/' + filename + '.png'))
     item.update(:sent => true)
     puts "tweet enviado"
     cont = cont + 1
@@ -183,17 +184,16 @@ def tweetear
   end  
 end
 
-def crear_nube
-  dst = Magick::Image.read("public/images/enamorado.png").first
-  src = Magick::Image.read('/fotos/05_5_1436222340.png'){self.size = "145x145"}.first
-  result = dst.composite(src, Magick::CenterGravity, Magick::OverCompositeOp)
-  result.write('composite2.gif')
+def crear_nube(nube, filename)
+  dst = Magick::Image.read("public/images/nube_" + nube + ".png").first
+  src = Magick::Image.read("/fotos/" + filename + ".png").first
+  src_1 = src.resize(225, 225)
+  result = dst.composite!(src_1, 250, 175, Magick::OverCompositeOp)
+  result.write('photos/nube/' + filename + '.png')
 end
 
-crear_nube
-
-# while true
-#   sleep(5)
-#   puts "iniciando"
-#   tweetear()
-# end
+while true
+  sleep(100)
+  puts "iniciando"
+  tweetear()
+end
