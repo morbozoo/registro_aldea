@@ -14,18 +14,6 @@ msg_tw_5 = " se siente Inteligente"
 ##-----------------------DATABASE------------------------
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
 
-class Reg_Mail
-  include DataMapper::Resource
-  property :id,           Serial
-  property :surface_id,   String, :required => true
-  property :nubecita,     Integer
-  property :name,         String, :required => true
-  property :message,      Text,   :required => true       
-  property :mail_list,    Text
-  property :sent,         Boolean, default: false
-end
-Reg_Mail.auto_upgrade!
-
 class Reg_Twitter
   include DataMapper::Resource
   property :id,         Serial
@@ -168,32 +156,32 @@ end
 
 def tweetear
   @to_tweet = Reg_Twitter.all(:sent => false)
-  cont = 1
+  @cont = 0
   for item in @to_tweet
-    mensaje = @mensajes[item[:nubecita]]
+    mensaje = item[:user_name] + @mensajes[item[:nubecita]]
     filename = item[:filename]
     crear_nube(item[:nubecita], item[:filename])
-    @twitter_clients[cont].update_with_media(mensaje, File.new('photos/nube/' + filename + '.png'))
-    item.update(:sent => true)
-    puts "tweet enviado"
-    cont = cont + 1
-    puts cont
-    if cont == 15
-      cont = 1
+    @twitter_clients[@cont].update_with_media(mensaje, File.new('photos/nube/' + filename + '.png'))
+    #item.update(:sent => true)
+    puts "tweet enviado con " + @cont.to_s
+    @cont = @cont + 1
+    puts @cont
+    if @cont == 14
+      @cont = 0
     end
   end  
 end
 
 def crear_nube(nube, filename)
-  dst = Magick::Image.read("public/images/nube_" + nube + ".png").first
+  dst = Magick::Image.read("public/images/nube_" + nube.to_s + ".png").first
   src = Magick::Image.read("/fotos/" + filename + ".png").first
-  src_1 = src.resize(225, 225)
-  result = dst.composite!(src_1, 250, 175, Magick::OverCompositeOp)
+  src_1 = src.resize(235, 235)
+  result = dst.composite!(src_1, 450, 125, Magick::OverCompositeOp)
   result.write('photos/nube/' + filename + '.png')
 end
 
 while true
-  sleep(100)
   puts "iniciando"
   tweetear()
+  sleep(100)
 end

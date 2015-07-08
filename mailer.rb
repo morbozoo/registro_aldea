@@ -1,6 +1,7 @@
 require 'data_mapper'
 require 'fog'
 require 'mail'
+require 'RMagick'
 
 ##-----------------------DATABASE------------------------
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
@@ -45,7 +46,7 @@ str_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http:
       <table background=\""
 
 str_2 = "\" width=\"595\">
-        <tr height=\"130\">
+        <tr height=\"20\">
           <td width=\"28\"></td>
           <td>
             <font face=\"helvetica\" size=\"5\" color=\"white\">&iexcl;Hola!</font>
@@ -58,39 +59,29 @@ str_2 = "\" width=\"595\">
 str_3 = " quiere compartirte como se siente hoy en Aldea Digital
           </font></td>
         </tr>
-        <tr height=\"127\">
-          <td></td>
-        </tr>
-        <tr height=\"146\">
+        <tr>
           <td width=\"28\"></td>
           <td>
-            <table>
-              <tr>
-                <td width=\"226\"></td>
-                <td>
-                  <img src=\""
+              <img src=\""
 
-str_4 = "\" height=\"155\" width=\"160\" alt=\"Tu foto en Aldea Digital 2015\"> 
-                </td>
-              </tr>
-            </table>
+str_4 = "\" width=\"585\" height=\"432\" alt=\"Tu foto en Aldea Digital 2015\">   
           </td>
-        </tr>
-        <tr height=\"70\">
-          <td></td>
         </tr>
         <tr height=\"60\">
           <td width=\"28\"></td>
-          <td width=\"150\"></td>
-          <td width=\"50\"><img src=\"http://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.r79.cf2.rackcdn.com/email/instagram.png\"></td>
-          <td width=\"50\"><img src=\"http://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.r79.cf2.rackcdn.com/email/twitter.png\"></td>
-          <td width=\"50\"><img src=\"http://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.r79.cf2.rackcdn.com/email/facebook.png\"></td>
+          <td width=\"140\"></td>
+          <td width=\"50\">
+            <a href=\"https://twitter.com/aldeadigital\">
+              <img src=\"http://72f7ed2ed9a20d512140-172f54d3400a9a3a895a0038338de347.r79.cf2.rackcdn.com/email/twitter.png\">
+            </a>
+          </td>
+          <td width=\"50\"></td>
+          <td width=\"50\"></td>
         </tr>
       </table>
     </td>
   </tr>
-</table></body></html>
-"
+</table></body></html>"
 
   ##-----------------------AUXILIAR METHODS------------------------
 
@@ -114,7 +105,7 @@ def get_nube(nubecita)
   return str_nube
 end
 
-def store_photo(str_name)
+def store_photo(str_name, nube)
   @storage = Fog::Storage.new(
     :provider => 'rackspace',
     :rackspace_username => 'kristian.tapia',
@@ -129,8 +120,9 @@ def store_photo(str_name)
   account = @storage.account
   account.meta_temp_url_key = 'jnRB6#1sduo8YGUF&%7r7guf6f'
   account.save
-  file = directory.files.create key: File.basename('/fotos/' + str_name + '.png'),
-                                body: File.open('/fotos/' + str_name + '.png', 'r')
+  crear_nube(nube, str_name)
+  file = directory.files.create key: File.basename('photos/nube/trans_' + str_name + '.png'),
+                                body: File.open('photos/nube/trans_' + str_name + '.png', 'r')
     @storage = Fog::Storage.new(
       :provider => 'rackspace',
       :rackspace_username => 'kristian.tapia',
@@ -139,7 +131,7 @@ def store_photo(str_name)
       :rackspace_temp_url_key => 'jnRB6#1sduo8YGUF&%7r7guf6f'
     )
     dir = @storage.directories.get('aldeaDigital')
-    fil = dir.files.get('' + str_name + '.png')
+    fil = dir.files.get('trans_' + str_name + '.png')
     return fil.public_url
 end
 
@@ -151,10 +143,21 @@ def name(surface, nubecita)
   return str_name
 end
 
-def send_mail(mail_list, str_name)
+def crear_nube(nube, filename)
+  if nube > 5
+    nube = 0
+  end
+  dst = Magick::Image.read("public/images/nube_trans_" + nube.to_s + ".png").first
+  src = Magick::Image.read("/fotos/" + filename + ".png").first
+  src_1 = src.resize(225, 225)
+  result = dst.composite!(src_1, 250, 160, Magick::OverCompositeOp)
+  result.write('photos/nube/trans_' + filename + '.png')
+end
+
+def send_mail(mail_list, str_name, name)
   Mail.deliver do
     from     'alguien'
-    to       'accounts_aldea2015@cocolab.mx'
+    to       mail_list
     subject  'Here is the image you wanted'
     html_part do
       content_type 'text/html; charset=UTF-8'
@@ -165,19 +168,25 @@ end
 
 
 ##-----------------------MAILER------------------------
-
-@to_mail = Reg_Mail.all(:sent => false)
-for item in @to_mail
-  nube      = item[:nubecita]
-  str_name  = item[:filename]
-  name      = item[:name]
-  mail_list = item[:mail_list]
-  str_nube  = get_nube(nube)
-  str_url   = store_photo(str_name)
-  final_string = str_1 + str_nube + str_2 + name + str_3 + str_url + str_4
-  File.write('public/html/' + str_name + '.html', final_string)
-  send_mail(mail_list, str_name)
-  item.update(:sent => true)
-  puts "enviado"
+def mandar
+  @to_mail = Reg_Mail.all(:sent => false)
+  for item in @to_mail
+    nube      = item[:nubecita]
+    str_name  = item[:filename]
+    name      = item[:name]
+    mail_list = item[:mail_list]
+    str_nube  = get_nube(nube)
+    str_url   = store_photo(str_name, nube)
+    final_string = str_1 + str_nube + str_2 + name + str_3 + str_url + str_4
+    File.write('public/html/' + str_name + '.html', final_string)
+    send_mail(mail_list, str_name, name)
+    item.update(:sent => true)
+    puts "enviado"
+  end
 end
 
+while true
+  puts "iniciando"
+  mandar()
+  sleep(100)
+end
