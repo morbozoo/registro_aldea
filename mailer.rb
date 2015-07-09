@@ -34,7 +34,7 @@ end
 
 ##-----------------------HTML STRINGS------------------------
 
-str_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+@str_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
 <html><body><table width=\"595\" height=\"777\" style=\"background: white\" text-align=\"center\" bgcolor=\"white\">
   <tr height=\"150\">
     <td align=\"center\">
@@ -45,7 +45,7 @@ str_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http:
     <td>
       <table background=\""
 
-str_2 = "\" width=\"595\">
+@str_2 = "\" width=\"595\">
         <tr height=\"20\">
           <td width=\"28\"></td>
           <td>
@@ -56,7 +56,7 @@ str_2 = "\" width=\"595\">
           <td width=\"28\"></td>
           <td width=\"550\"><font face=\"helvetica\" size=\"5\" color=\"white\">"
 
-str_3 = " quiere compartirte como se siente hoy en Aldea Digital
+@str_3 = " quiere compartirte como se siente hoy en Aldea Digital
           </font></td>
         </tr>
         <tr>
@@ -64,7 +64,7 @@ str_3 = " quiere compartirte como se siente hoy en Aldea Digital
           <td>
               <img src=\""
 
-str_4 = "\" width=\"585\" height=\"432\" alt=\"Tu foto en Aldea Digital 2015\">   
+@str_4 = "\" width=\"585\" height=\"432\" alt=\"Tu foto en Aldea Digital 2015\">   
           </td>
         </tr>
         <tr height=\"60\">
@@ -177,7 +177,7 @@ def mandar
     mail_list = item[:mail_list]
     str_nube  = get_nube(nube)
     str_url   = store_photo(str_name, nube)
-    final_string = str_1 + str_nube + str_2 + name + str_3 + str_url + str_4
+    final_string = @str_1 + str_nube + @str_2 + name + @str_3 + str_url + @str_4
     File.write('public/html/' + str_name + '.html', final_string)
     send_mail(mail_list, str_name, name)
     item.update(:sent => true)

@@ -153,25 +153,6 @@ end
 @twitter_clients.push(client15)
 
 ##-----------------------------------------------
-
-def tweetear
-  @to_tweet = Reg_Twitter.all(:sent => false)
-  @cont = 0
-  for item in @to_tweet
-    mensaje = item[:user_name] + @mensajes[item[:nubecita]]
-    filename = item[:filename]
-    crear_nube(item[:nubecita], item[:filename])
-    @twitter_clients[@cont].update_with_media(mensaje, File.new('photos/nube/' + filename + '.png'))
-    #item.update(:sent => true)
-    puts "tweet enviado con " + @cont.to_s
-    @cont = @cont + 1
-    puts @cont
-    if @cont == 14
-      @cont = 0
-    end
-  end  
-end
-
 def crear_nube(nube, filename)
   dst = Magick::Image.read("public/images/nube_" + nube.to_s + ".png").first
   src = Magick::Image.read("/fotos/" + filename + ".png").first
@@ -180,8 +161,18 @@ def crear_nube(nube, filename)
   result.write('photos/nube/' + filename + '.png')
 end
 
-while true
-  puts "iniciando"
-  tweetear()
-  sleep(100)
-end
+@to_tweet = Reg_Twitter.all(:sent => false)
+@cont = 0
+for item in @to_tweet
+  mensaje = item[:user_name] + @mensajes[item[:nubecita]]
+  filename = item[:filename]
+  crear_nube(item[:nubecita], item[:filename])
+  @twitter_clients[@cont].update_with_media(mensaje, File.new('photos/nube/' + filename + '.png'))
+  item.update(:sent => true)
+  puts "tweet enviado con " + @cont.to_s
+  @cont = @cont + 1
+  puts @cont
+  if @cont == 14
+    @cont = 0
+  end
+end  

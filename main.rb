@@ -5,9 +5,7 @@ require 'json'
 require 'sinatra'
 require 'data_mapper'
 require 'twitter'
-require 'pony'
 require 'rmagick'
-require 'roadie'
 
 ##-----------------------DATABASE------------------------
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
