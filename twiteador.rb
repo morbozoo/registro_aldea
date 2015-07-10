@@ -23,6 +23,7 @@ class Reg_Twitter
   property :tweet,      String
   property :twitter_id, String
   property :filename,   String
+  property :sender,     Integer, default: 20
   property :sent,       Boolean, default: false
 end
 Reg_Twitter.auto_upgrade!
@@ -155,24 +156,21 @@ end
 ##-----------------------------------------------
 def crear_nube(nube, filename)
   dst = Magick::Image.read("public/images/nube_" + nube.to_s + ".png").first
-  src = Magick::Image.read("/fotos/" + filename + ".png").first
+  src = Magick::Image.read("photos/temp/" + filename + ".png").first
   src_1 = src.resize(235, 235)
-  result = dst.composite!(src_1, 450, 125, Magick::OverCompositeOp)
+  result = dst.composite!(src_1, 450, 145, Magick::OverCompositeOp)
   result.write('photos/nube/' + filename + '.png')
+  FileUtils.rm("photos/temp/" + filename + ".png")
 end
 
 @to_tweet = Reg_Twitter.all(:sent => false)
-@cont = 0
 for item in @to_tweet
-  mensaje = item[:user_name] + @mensajes[item[:nubecita]]
   filename = item[:filename]
   crear_nube(item[:nubecita], item[:filename])
-  @twitter_clients[@cont].update_with_media(mensaje, File.new('photos/nube/' + filename + '.png'))
+  @twitter_clients[item[:id]%15].update_with_media(item[:tweet], File.new('photos/nube/' + filename + '.png'))
   item.update(:sent => true)
-  puts "tweet enviado con " + @cont.to_s
-  @cont = @cont + 1
-  puts @cont
-  if @cont == 14
-    @cont = 0
-  end
+  item.update(:sender => item[:id]%15)
+  puts "tweet enviado con " + item[:sender].to_s
 end  
+
+sleep(5)

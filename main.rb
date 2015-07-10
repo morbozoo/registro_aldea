@@ -94,7 +94,8 @@ def circle_photo(name)
   im.composite!(mask, Magick::CenterGravity, Magick::CopyOpacityCompositeOp)
   chopped = im.crop(125, 3, 400, 400)
   mirrored = chopped.flop
-  mirrored.write '/fotos/' + name + '.png'
+  mirrored.write 'photos/temp/' + name + '.png'
+  FileUtils.cp('photos/temp/' + name + '.png', '/fotos')
 end
 
 def name(surface, nubecita)
